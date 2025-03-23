@@ -39,6 +39,14 @@ public class JwtUtil {
 				.signWith(getSigningKey()) // ✅ Correctly signing with SecretKey
 				.compact();
 	}
+	
+	public String generateRefreshToken(String email) {
+		return Jwts.builder().subject(email).issuedAt(new Date())
+				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24 * 30)) // 1 hour
+				.signWith(getSigningKey()) // ✅ Correctly signing with SecretKey
+				.compact();
+	}
+	
 
 	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
 		System.out.println("Received Token: " + token);
