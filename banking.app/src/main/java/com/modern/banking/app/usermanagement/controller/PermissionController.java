@@ -1,0 +1,51 @@
+package com.modern.banking.app.usermanagement.controller;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.modern.banking.app.usermanagement.model.Permission;
+import com.modern.banking.app.usermanagement.service.PermissionService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/usermanagement/api/v1/permission")
+public class PermissionController {
+	private final PermissionService permissionService;
+
+	@GetMapping
+	public List<Permission> getAllPermissions() {
+		return permissionService.getAllPermissions();
+	}
+
+	@GetMapping("/{id}")
+	public Optional<Permission> getPermissionById(@PathVariable UUID id) {
+		return permissionService.getPermissionById(id);
+	}
+
+	@PostMapping
+	public Permission createPermission(@RequestBody Permission permission) {
+		return permissionService.createPermission(permission);
+	}
+
+	@PutMapping("/{id}")
+	public Permission updatePermission(@PathVariable("id") UUID id, @RequestBody Permission permission) {
+		return permissionService.updatePermission(id, permission);
+	}
+
+	@DeleteMapping("/{id}")
+	public void deletePermission(@PathVariable UUID id) {
+		permissionService.deletePermission(id);
+	}
+}

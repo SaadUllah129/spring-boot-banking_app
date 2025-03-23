@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.modern.banking.app.usermanagement.dto.LoginDto;
 import com.modern.banking.app.usermanagement.dto.UserDto;
 import com.modern.banking.app.usermanagement.dto.UserResponseDto;
+import com.modern.banking.app.usermanagement.service.AuthService;
 import com.modern.banking.app.usermanagement.service.UserService;
 
 import jakarta.validation.Valid;
@@ -17,10 +19,17 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class UserController {
-	 private final UserService userService;
+	private final UserService userService;
+	private final AuthService authService;
 
-	    @PostMapping("/register")
-	    public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserDto userDTO) {
-	        return ResponseEntity.ok(userService.registerUser(userDTO));
-	    }
+	@PostMapping("/register")
+	public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserDto userDTO) {
+		return ResponseEntity.ok(userService.registerUser(userDTO));
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody LoginDto loginDTO) {
+		String token = authService.authenticateUser(loginDTO);
+		return ResponseEntity.ok(token);
+	}
 }
