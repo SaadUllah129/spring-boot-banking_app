@@ -2,6 +2,7 @@ package com.modern.banking.app.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.modern.banking.app.usermanagement.service.CustomUserDetailsService;
 import com.modern.banking.app.utils.JwtUtil;
@@ -25,6 +27,7 @@ public class SecurityConfig {
 
 	private final CustomUserDetailsService userDetailsService;
 	private final JwtUtil jwtUtil;
+	private final CorsConfigurationSource corsConfigurationSource;
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -47,10 +50,14 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		return http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> {
-			auth.requestMatchers("/api/auth/**").permitAll();
-			auth.anyRequest().authenticated();
-		}).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		return http
+				.cors(cors -> cors.configurationSource(corsConfigurationSource))
+				.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> {
+					auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+					auth.requestMatchers("/api/auth/**").permitAll();
+					auth.anyRequest().authenticated();
+					}).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvideder())
 				.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService),
 				UsernamePasswordAuthenticationFilter.class).build();

@@ -31,7 +31,7 @@ public class UserService {
 		user.setPhone(userDto.getPhone());
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-		Role role = roleRepository.findByName("Customer")
+		Role role = roleRepository.findByName("ROLE_ADMIN")
 				.orElseThrow(() -> new RuntimeException("default role not found"));
 		Set<Role> roles = new HashSet<>();
 		roles.add(role);
