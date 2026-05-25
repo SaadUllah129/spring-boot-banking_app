@@ -2,13 +2,15 @@ package com.modern.banking.app.usermanagement.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.modern.banking.app.usermanagement.dto.AuthResponse;
 import com.modern.banking.app.usermanagement.dto.LoginDto;
+import com.modern.banking.app.usermanagement.exception.CustomException;
+import com.modern.banking.app.usermanagement.exception.TokenException;
 import com.modern.banking.app.usermanagement.model.RefreshToken;
 import com.modern.banking.app.usermanagement.model.User;
 import com.modern.banking.app.usermanagement.repository.UserRepository;
@@ -30,11 +32,14 @@ public class AuthService {
 				.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
 
 		User user = userRepository.findByEmail(loginDTO.getEmail())
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
 
 		String jwtToken = jwtUtil.generateToken(user.getEmail());
 		String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
 		
+		//Delete all previous Refresh tokens, we can also maintain the history by not deleting the records.
+		refreshTokenRepository.deleteAllByUser(user);
+
 		// Store refresh token in the database
         RefreshToken refreshTokenEntity = new RefreshToken();
         refreshTokenEntity.setUser(user);
@@ -50,14 +55,14 @@ public class AuthService {
         String username = jwtUtil.extractUsername(refreshToken);
         
         if (username == null) {
-            throw new RuntimeException("Invalid refresh token");
+            throw new TokenException("Invalid refresh token");
         }
 
         // Validate refresh token in DB
         RefreshToken storedRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
         
         if (storedRefreshToken == null || storedRefreshToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Refresh token expired or invalid");
+            throw new TokenException("Refresh token expired or invalid");
         }
 
         String jwtToken = jwtUtil.generateToken(username);

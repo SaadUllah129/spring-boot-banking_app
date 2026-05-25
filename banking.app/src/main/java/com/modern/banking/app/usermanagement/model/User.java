@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.validation.constraints.Email;
@@ -39,13 +40,23 @@ public class User implements UserDetails {
 	private String password;
 
 	// Unidirectional Many-to-Many relationship
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_roles", schema = "usermanagement", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return roles.stream().map(role -> (GrantedAuthority) role::getName).collect(Collectors.toSet());
+		
+		Set<String> authorities = new HashSet<String>();
+		roles.forEach(role -> {
+			authorities.add("ROLE_"+role.getName());
+			role.getPermissions().forEach(permission ->
+            authorities.add(permission.getName()));
+		});
+			
+		return authorities
+				.stream()
+				.map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
 	}
 
 	@Override
