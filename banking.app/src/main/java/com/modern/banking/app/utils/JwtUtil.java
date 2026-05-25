@@ -34,15 +34,17 @@ public class JwtUtil {
 	}
 
 	public String generateToken(String email) {
-		return Jwts.builder().subject(email).issuedAt(new Date())
-				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // 1 hour
+		return Jwts
+				.builder()
+				.subject(email).issuedAt(new Date())
+				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
 				.signWith(getSigningKey()) // ✅ Correctly signing with SecretKey
 				.compact();
 	}
 	
 	public String generateRefreshToken(String email) {
 		return Jwts.builder().subject(email).issuedAt(new Date())
-				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24 * 30)) // 1 hour
+				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
 				.signWith(getSigningKey()) // ✅ Correctly signing with SecretKey
 				.compact();
 	}

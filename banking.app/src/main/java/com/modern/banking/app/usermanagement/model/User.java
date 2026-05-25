@@ -1,7 +1,9 @@
 package com.modern.banking.app.usermanagement.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,17 +48,19 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		
-		Set<String> authorities = new HashSet<String>();
-		roles.forEach(role -> {
-			authorities.add("ROLE_"+role.getName());
-			role.getPermissions().forEach(permission ->
-            authorities.add(permission.getName()));
-		});
-			
-		return authorities
-				.stream()
-				.map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+	    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+	    roles.forEach(role -> {
+	        // Add the role itself
+	        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+
+	        // Add each permission under that role
+	        role.getPermissions().forEach(permission ->
+	            authorities.add(new SimpleGrantedAuthority(permission.getName()))
+	        );
+	    });
+
+	    return authorities;
 	}
 
 	@Override

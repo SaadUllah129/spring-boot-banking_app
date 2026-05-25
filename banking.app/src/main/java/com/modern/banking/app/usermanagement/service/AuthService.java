@@ -1,6 +1,7 @@
 package com.modern.banking.app.usermanagement.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,14 +32,15 @@ public class AuthService {
 		authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
 
-		User user = userRepository.findByEmail(loginDTO.getEmail())
+		User user = userRepository.findByEmailWithRolesAndPermissions(loginDTO.getEmail())
 				.orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
 
 		String jwtToken = jwtUtil.generateToken(user.getEmail());
 		String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
 		
+		
 		//Delete all previous Refresh tokens, we can also maintain the history by not deleting the records.
-		refreshTokenRepository.deleteAllByUser(user);
+		//refreshTokenRepository.deleteAllByUserId(user.getId());
 
 		// Store refresh token in the database
         RefreshToken refreshTokenEntity = new RefreshToken();
@@ -59,9 +61,9 @@ public class AuthService {
         }
 
         // Validate refresh token in DB
-        RefreshToken storedRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
+        Optional<RefreshToken> storedRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
         
-        if (storedRefreshToken == null || storedRefreshToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+        if (storedRefreshToken.isEmpty() || storedRefreshToken.get().getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new TokenException("Refresh token expired or invalid");
         }
 

@@ -4,11 +4,13 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.modern.banking.app.usermanagement.dto.CreateUserRequest;
 import com.modern.banking.app.usermanagement.dto.UserResponse;
+import com.modern.banking.app.usermanagement.exception.CustomException;
 import com.modern.banking.app.usermanagement.model.Role;
 import com.modern.banking.app.usermanagement.model.User;
 import com.modern.banking.app.usermanagement.repository.RoleRepository;
@@ -32,7 +34,7 @@ public class UserService {
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
 		Role role = roleRepository.findByName("ROLE_ADMIN")
-				.orElseThrow(() -> new RuntimeException("default role not found"));
+				.orElseThrow(() -> new CustomException("default role not found", HttpStatus.NOT_FOUND));
 		Set<Role> roles = new HashSet<>();
 		roles.add(role);
 		user.setRoles(roles);

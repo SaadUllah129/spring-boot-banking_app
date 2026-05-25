@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "refresh_token")
+@Table(name = "refresh_token", schema = "usermanagement")
 public class RefreshToken {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

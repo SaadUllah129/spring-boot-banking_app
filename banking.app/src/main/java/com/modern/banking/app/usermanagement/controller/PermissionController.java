@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.modern.banking.app.usermanagement.dto.PermissionRequest;
 import com.modern.banking.app.usermanagement.model.Permission;
 import com.modern.banking.app.usermanagement.service.PermissionService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,13 +36,13 @@ public class PermissionController {
 	}
 
 	@PostMapping
-	public Permission createPermission(@RequestBody Permission permission) {
-		return permissionService.createPermission(permission);
+	public Permission createPermission(@Valid @RequestBody PermissionRequest request) {
+		return permissionService.createPermission(request);
 	}
 
 	@PutMapping("/{id}")
-	public Permission updatePermission(@PathVariable("id") UUID id, @RequestBody Permission permission) {
-		return permissionService.updatePermission(id, permission);
+	public Permission updatePermission(@Valid @PathVariable("id") UUID id, @RequestBody PermissionRequest request) {
+		return permissionService.updatePermission(id, request);
 	}
 
 	@DeleteMapping("/{id}")

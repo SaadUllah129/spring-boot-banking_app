@@ -12,10 +12,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	Optional<User> findByEmail(String email);
 	
 	@Query("""
-			SELECT u FROM User u
-			JOIN FETCH u.roles r
-			JOIN FETCH r.permissions
-			WHERE u.email = :email
-			""")
-			Optional<User> findByEmailWithRolesAndPermissions(String email);
+	        SELECT DISTINCT u FROM User u
+	        LEFT JOIN FETCH u.roles r
+	        LEFT JOIN FETCH r.permissions
+	        WHERE u.email = :email
+	        """)
+	Optional<User> findByEmailWithRolesAndPermissions(String email);
 }
