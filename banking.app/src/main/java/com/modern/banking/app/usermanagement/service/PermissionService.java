@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.modern.banking.app.usermanagement.exception.CustomException;
 import com.modern.banking.app.usermanagement.model.Permission;
 import com.modern.banking.app.usermanagement.repository.PermissionRepository;
 
@@ -20,8 +22,10 @@ public class PermissionService {
 		return permissionRepository.findAll();
 	}
 
-	public Optional<Permission> getPermissionById(UUID id) {
-		return permissionRepository.findById(id);
+	public Permission getPermissionById(UUID id) {
+		return permissionRepository.findById(id)
+				.orElseThrow(() -> 
+				new CustomException("Permission not found", HttpStatus.NOT_FOUND));
 	}
 
 	public Permission createPermission(Permission permission) {
@@ -32,7 +36,9 @@ public class PermissionService {
 		return permissionRepository.findById(id).map(permission -> {
 			permission.setName(updatedPermission.getName());
 			return permissionRepository.save(permission);
-		}).orElseThrow(() -> new RuntimeException("Permission not found"));
+		})
+				.orElseThrow(() -> 
+				new CustomException("Permission not found", HttpStatus.NOT_FOUND));
 	}
 
 	public void deletePermission(UUID id) {

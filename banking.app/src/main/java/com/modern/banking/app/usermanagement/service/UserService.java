@@ -7,8 +7,8 @@ import java.util.Set;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.modern.banking.app.usermanagement.dto.UserDto;
-import com.modern.banking.app.usermanagement.dto.UserResponseDto;
+import com.modern.banking.app.usermanagement.dto.CreateUserRequest;
+import com.modern.banking.app.usermanagement.dto.UserResponse;
 import com.modern.banking.app.usermanagement.model.Role;
 import com.modern.banking.app.usermanagement.model.User;
 import com.modern.banking.app.usermanagement.repository.RoleRepository;
@@ -23,7 +23,7 @@ public class UserService {
 	private final RoleRepository roleRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
 
-	public UserResponseDto registerUser(UserDto userDto) {
+	public UserResponse registerUser(CreateUserRequest userDto) {
 		User user = new User();
 		user.setFirstName(userDto.getFirstName());
 		user.setLastName(userDto.getLastName());
@@ -43,8 +43,8 @@ public class UserService {
 
 	}
 
-	private UserResponseDto mapToUserResponseDto(User user) {
-		UserResponseDto userResponseDto = new UserResponseDto();
+	private UserResponse mapToUserResponseDto(User user) {
+		UserResponse userResponseDto = new UserResponse();
 		userResponseDto.setId(user.getId());
 		userResponseDto.setFirstName(user.getFirstName());
 		userResponseDto.setLastName(user.getLastName());

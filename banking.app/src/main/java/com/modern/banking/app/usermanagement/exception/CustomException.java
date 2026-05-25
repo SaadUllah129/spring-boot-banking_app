@@ -1,20 +1,15 @@
 package com.modern.banking.app.usermanagement.exception;
 
+import org.springframework.http.HttpStatus;
+
+import lombok.Getter;
+
+@Getter
 public class CustomException extends RuntimeException {
-    private String message;
-    private int statusCode;
+    private HttpStatus status;
 
-    public CustomException(String message, int statusCode) {
+    public CustomException(String message, HttpStatus status) {
         super(message);
-        this.message = message;
-        this.statusCode = statusCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
+        this.status = status;
     }
 }

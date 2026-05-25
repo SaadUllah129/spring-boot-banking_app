@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.modern.banking.app.usermanagement.dto.AuthResponse;
 import com.modern.banking.app.usermanagement.dto.LoginDto;
-import com.modern.banking.app.usermanagement.dto.UserDto;
-import com.modern.banking.app.usermanagement.dto.UserResponseDto;
+import com.modern.banking.app.usermanagement.dto.CreateUserRequest;
+import com.modern.banking.app.usermanagement.dto.UserResponse;
 import com.modern.banking.app.usermanagement.service.AuthService;
 import com.modern.banking.app.usermanagement.service.UserService;
 
@@ -25,12 +25,12 @@ public class UserController {
 	private final AuthService authService;
 
 	@PostMapping("/register")
-	public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserDto userDTO) {
+	public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody CreateUserRequest userDTO) {
 		return ResponseEntity.ok(userService.registerUser(userDTO));
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<AuthResponse> login(@RequestBody LoginDto loginDTO) {
+	public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginDto loginDTO) {
 		AuthResponse authResponse = authService.authenticateUser(loginDTO);
 		return ResponseEntity.ok(authResponse);
 	}

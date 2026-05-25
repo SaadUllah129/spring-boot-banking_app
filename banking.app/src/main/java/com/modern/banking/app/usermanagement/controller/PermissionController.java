@@ -1,7 +1,6 @@
 package com.modern.banking.app.usermanagement.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +29,7 @@ public class PermissionController {
 	}
 
 	@GetMapping("/{id}")
-	public Optional<Permission> getPermissionById(@PathVariable UUID id) {
+	public Permission getPermissionById(@PathVariable UUID id) {
 		return permissionService.getPermissionById(id);
 	}
 

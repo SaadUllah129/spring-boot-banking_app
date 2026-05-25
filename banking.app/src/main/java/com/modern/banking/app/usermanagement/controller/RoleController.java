@@ -30,7 +30,7 @@ public class RoleController {
 	}
 
 	@GetMapping("/{id}")
-	public Optional<Role> getRoleById(@PathVariable UUID id) {
+	public Role getRoleById(@PathVariable UUID id) {
 		return roleService.getRoleById(id);
 	}
 
