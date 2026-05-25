@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDto {
+public class CreateUserRequest {
 	@NotBlank(message = "First Name cannot be blank")
 	private String firstName;
 	

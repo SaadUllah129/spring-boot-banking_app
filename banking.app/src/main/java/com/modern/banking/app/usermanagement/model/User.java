@@ -36,7 +36,7 @@ public class User implements UserDetails {
 	@Column(nullable = false, unique = true, length = 50)
 	private String phone;
 	@Column(nullable = false)
-	private String Password;
+	private String password;
 
 	// Unidirectional Many-to-Many relationship
 	@ManyToMany(fetch = FetchType.EAGER)

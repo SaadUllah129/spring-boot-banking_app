@@ -1,7 +1,6 @@
 package com.modern.banking.app.usermanagement.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
